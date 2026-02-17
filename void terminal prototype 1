@@ -33,7 +33,7 @@ def fake_buttons(title, options):
             return options[index]
 
 
-# ---------------- BASIC IO CHAOS ----------------
+
 
 def save_data(p,d):
     try:
@@ -54,7 +54,7 @@ def load_data(p):
 def clear():
     os.system("cls" if os.name=="nt" else "clear")
 
-# ---------------- LOAD CORE ----------------
+
 
 user=load_data(USER_FILE)
 tasks=load_data(TASK_FILE)
@@ -87,7 +87,7 @@ mini_ai={
 "motivation":["keep pushing"]
 }
 
-# ---------------- LOGIN ----------------
+
 
 def login():
     if "pass" not in user:
@@ -103,7 +103,7 @@ def create_user():
         user["name"]=input("Name: ")
         save_data(USER_FILE,user)
 
-# ---------------- XP SYSTEM ----------------
+
 
 def give_xp(x):
     user["xp"]+=x
@@ -113,7 +113,6 @@ def give_xp(x):
         print("LEVEL UP:",user["level"])
     save_data(USER_FILE,user)
 
-# ---------------- TASKS ----------------
 
 def add_task():
     t=input("Task: ")
@@ -134,7 +133,7 @@ def complete_task():
         save_data(TASK_FILE,tasks)
         give_xp(25)
 
-# ---------------- MINI GAME ----------------
+
 
 def play_game():
     n=random.randint(1,50)
@@ -154,7 +153,6 @@ def play_game():
         else:
             print("lower")
 
-# ---------------- CHAT AI ----------------
 
 def ai_reply(text):
     for k in mini_ai:
@@ -163,7 +161,6 @@ def ai_reply(text):
             return True
     return False
 
-# ---------------- INVENTORY ----------------
 
 def add_item(cmd):
     inventory.append(cmd.replace("get",""))
@@ -173,7 +170,7 @@ def show_inventory():
     for i in inventory:
         print("-",i)
 
-# ---------------- BOSS ----------------
+
 
 def fight_boss():
     hp=100
@@ -190,7 +187,7 @@ def fight_boss():
     achievements.append("First Blood")
     skills["logic"]+=1
 
-# ---------------- SANDBOX ----------------
+
 
 def sandbox():
     print("SANDBOX MODE | type help | exit to leave")
@@ -241,7 +238,7 @@ back            - same as exit
             print("error:",e)
 
 
-# ---------------- HELP ----------------
+
 
 def show_help():
     print("""
@@ -261,7 +258,6 @@ roast
 exit
 """)
 
-# ---------------- STARTUP ----------------
 
 clear()
 login()
@@ -270,7 +266,6 @@ create_user()
 print("WELCOME",user["name"])
 print("Level:",user["level"],"XP:",user["xp"])
 
-# ---------------- MAIN LOOP ----------------
 
 while True:
     cmd=input(">>> ").lower()
