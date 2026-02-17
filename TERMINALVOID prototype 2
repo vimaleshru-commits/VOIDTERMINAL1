@@ -1,0 +1,499 @@
+import os
+import time
+import random
+
+USER_FILE="user.txt"
+TASK_FILE="tasks.txt"
+CONFIG_FILE="config.txt"
+
+def fake_buttons(title, options):
+    index = 0
+    while True:
+        clear()
+        print("==", title, "==\n")
+
+        for i,o in enumerate(options):
+            if i == index:
+                print(">>", o)
+            else:
+                print("  ", o)
+
+        print("\nType number or press Enter")
+        for i,o in enumerate(options):
+            print(str(i), "-", o)
+
+        k = input("> ").lower()
+
+        if k.isdigit():
+            n = int(k)
+            if 0 <= n < len(options):
+                return options[n]
+
+        if k == "":
+            return options[index]
+
+
+# ---------------- BASIC IO CHAOS ----------------
+
+def save_data(p,d):
+    try:
+        f=open(p,"w")
+        f.write(str(d))
+        f.close()
+    except:
+        pass
+
+def load_data(p):
+    if not os.path.exists(p):
+        return {}
+    try:
+        return eval(open(p).read())
+    except:
+        return {}
+
+def clear():
+    os.system("cls" if os.name=="nt" else "clear")
+
+# ---------------- LOAD CORE ----------------
+
+user=load_data(USER_FILE)
+tasks=load_data(TASK_FILE)
+config=load_data(CONFIG_FILE)
+
+if not isinstance(user,dict): user={}
+if not isinstance(tasks,dict): tasks={}
+if not isinstance(config,dict): config={}
+
+if "xp" not in user: user["xp"]=0
+if "level" not in user: user["level"]=1
+
+inventory=[]
+history=[]
+achievements=[]
+skills={"focus":0,"logic":0,"speed":0}
+
+roasts=[
+"bro wake up",
+"npc behavior",
+"future you disappointed",
+"skill issue",
+"keyboard warrior"
+]
+
+mini_ai={
+"hello":["yo","sup"],
+"sad":["damn","stay strong"],
+"tired":["drink water"],
+"motivation":["keep pushing"]
+}
+
+def egg_builder():
+    print("""
+RESPECT TO ALL BUILDERS
+
+people who turn ideas into reality
+are built different
+
++40 XP
+""")
+    user["xp"]+=40
+
+def egg_coder():
+    print("""
+RESPECT TO CODERS
+
+you stare at errors
+until they fear you
+
++35 XP
+""")
+    user["xp"]+=35
+
+def egg_creator():
+    print("""
+RESPECT TO CREATORS
+
+art, code, music, stories
+all matter
+
++35 XP
+""")
+    user["xp"]+=35
+
+def egg_grind():
+    print("""
+RESPECT THE GRIND
+
+slow progress
+still progress
+
++30 XP
+""")
+    user["xp"]+=30
+
+def egg_legend():
+    print("""
+TO ALL THE LEGENDS
+WHO INSPIRED MILLIONS
+
+YOU LIVE FOREVER
+IN WHAT YOU BUILT
+
++50 XP
+""")
+    user["xp"]+=50
+def egg_sus():
+    print("""
+SUS DETECTED
+
+among us still lives rent free in your brain
+
++15 XP
+""")
+    user["xp"]+=15
+
+def egg_rizz():
+    print("""
+RIZZ CHECK
+
+status: nonexistent
+confidence: high
+
++20 XP
+""")
+    user["xp"]+=20
+
+def egg_sigma():
+    print("""
+SIGMA MALE ENERGY
+
+bro watched 3 edits and changed personality
+
++25 XP
+""")
+    user["xp"]+=25
+
+def egg_lore():
+    print("""
+LORE DROP:
+
+this OS was coded at 3am
+with 2 braincells
+and infinite ambition
+
++20 XP
+""")
+    user["xp"]+=20
+
+def egg_techno():
+    print("""
+BLOOD FOR THE BLOOD GOD
+REST IN POWER TECHNOBLADE
+
+A LEGEND NEVER DIES
+
++100 XP
+""")
+    user["xp"]+=100
+
+# ---------------- LOGIN ----------------
+
+def login():
+    if "pass" not in user:
+        user["pass"]=input("Create password: ")
+        save_data(USER_FILE,user)
+    p=input("Password: ")
+    if p!=user["pass"]:
+        print("wrong")
+        exit()
+
+def create_user():
+    if "name" not in user:
+        user["name"]=input("Name: ")
+        save_data(USER_FILE,user)
+
+# ---------------- XP SYSTEM ----------------
+
+def give_xp(x):
+    user["xp"]+=x
+    if user["xp"]>=user["level"]*100:
+        user["xp"]=0
+        user["level"]+=1
+        print("LEVEL UP:",user["level"])
+    save_data(USER_FILE,user)
+
+# ---------------- TASKS ----------------
+
+def add_task():
+    t=input("Task: ")
+    i=str(len(tasks)+1)
+    tasks[i]={"text":t,"done":False}
+    save_data(TASK_FILE,tasks)
+    give_xp(10)
+
+def show_tasks():
+    for k in tasks:
+        mark="✓" if tasks[k]["done"] else " "
+        print(k,"[",mark,"]",tasks[k]["text"])
+
+def complete_task():
+    i=input("ID: ")
+    if i in tasks:
+        tasks[i]["done"]=True
+        save_data(TASK_FILE,tasks)
+        give_xp(25)
+
+# ---------------- MINI GAME ----------------
+
+def play_game():
+    n=random.randint(1,50)
+    while True:
+        g=input("Guess(q): ")
+        if g=="q": break
+        if not g.isdigit():
+            print("number pls")
+            continue
+        g=int(g)
+        if g==n:
+            print("you win")
+            give_xp(50)
+            break
+        elif g<n:
+            print("higher")
+        else:
+            print("lower")
+
+# ---------------- CHAT AI ----------------
+
+def ai_reply(text):
+    for k in mini_ai:
+        if k in text:
+            print(random.choice(mini_ai[k]))
+            return True
+    return False
+
+# ---------------- INVENTORY ----------------
+
+def add_item(cmd):
+    inventory.append(cmd.replace("get",""))
+    print("item added")
+
+def show_inventory():
+    for i in inventory:
+        print("-",i)
+
+# ---------------- BOSS ----------------
+
+def fight_boss():
+    hp=100
+    while hp>0:
+        print("BOSS HP:",hp)
+        c=input("attack/run: ")
+        if c=="attack":
+            d=random.randint(10,30)
+            hp-=d
+            print("hit",d)
+        else:
+            return
+    print("BOSS DEFEATED")
+    achievements.append("First Blood")
+    skills["logic"]+=1
+
+# ---------------- SANDBOX ----------------
+
+def sandbox():
+    print("SANDBOX MODE | type help | exit to leave")
+    while True:
+        c=input("sandbox>>> ")
+        if c=="exit":
+            break
+
+        if c=="help":
+            print("""
+help            - show this menu
+vars            - show live variables
+clear           - clear screen
+math            - calculator mode
+back            - same as exit
+""")
+            continue
+
+        if c=="vars":
+            print("user =",user)
+            print("tasks =",tasks)
+            print("inventory =",inventory)
+            print("skills =",skills)
+            print("achievements =",achievements)
+            continue
+
+        if c=="clear":
+            clear()
+            continue
+
+        if c=="math":
+            while True:
+                m=input("math>>> ")
+                if m=="exit":
+                    break
+                try:
+                    print(eval(m))
+                except:
+                    print("math error")
+            continue
+
+        if c=="back":
+            break
+
+        try:
+            exec(c)
+        except Exception as e:
+            print("error:",e)
+
+
+# ---------------- HELP ----------------
+
+def show_help():
+    print("""
+help
+addtask
+tasks
+done
+play
+get <item>
+inventory
+history
+plan
+sandbox
+stats
+boss
+roast
+exit
+""")
+
+# ---------------- STARTUP ----------------
+
+clear()
+login()
+create_user()
+
+print("WELCOME",user["name"])
+print("Level:",user["level"],"XP:",user["xp"])
+
+# ---------------- MAIN LOOP ----------------
+
+while True:
+    cmd=input(">>> ").lower()
+    history.append(cmd)
+
+    if len(history)>25:
+        history.pop(0)
+
+    if ai_reply(cmd):
+        continue
+
+    if cmd=="help":
+        show_help()
+
+    elif cmd == "menu":
+        choice = fake_buttons("MAIN MENU", [
+            "Tasks",
+            "Add Task",
+            "Play Game",
+            "Inventory",
+            "Stats",
+            "Boss Fight",
+            "Exit"
+        ])
+
+        if choice == "Tasks":
+            show_tasks()
+        elif choice == "Add Task":
+            add_task()
+        elif choice == "Play Game":
+            play_game()
+        elif choice == "Inventory":
+            show_inventory()
+        elif choice == "Stats":
+            print("Level:", user["level"], "XP:", user["xp"])
+        elif choice == "Boss Fight":
+            fight_boss()
+        elif choice == "Exit":
+            break
+
+    elif cmd=="addtask":
+        add_task()
+    elif cmd == "builder":
+        egg_builder()
+
+    elif cmd == "coder":
+        egg_coder()
+
+    elif cmd == "creator":
+        egg_creator()
+
+    elif cmd == "grind":
+        egg_grind()
+
+    elif cmd == "legend":
+        egg_legend()
+    elif cmd == "sus":
+        egg_sus()
+
+    elif cmd == "rizz":
+        egg_rizz()
+
+    elif cmd == "sigma":
+        egg_sigma()
+
+    elif cmd == "lore":
+        egg_lore()
+
+    elif cmd == "technoblade":
+        egg_techno()
+
+
+
+    elif cmd=="tasks":
+        show_tasks()
+
+    elif cmd=="done":
+        complete_task()
+
+    elif cmd=="play":
+        play_game()
+
+    elif cmd.startswith("get"):
+        add_item(cmd)
+
+    elif cmd=="inventory":
+        show_inventory()
+
+    elif cmd=="history":
+        for h in history:
+            print(h)
+
+    elif cmd=="plan":
+        for k in list(tasks)[:5]:
+            print("-",tasks[k]["text"])
+
+    elif cmd=="sandbox":
+        sandbox()
+
+    elif cmd=="stats":
+        print("Level:",user["level"],"XP:",user["xp"])
+
+    elif cmd=="boss":
+        fight_boss()
+
+    elif cmd=="roast":
+        print(random.choice(roasts))
+
+    elif cmd=="exit":
+        save_data(USER_FILE,user)
+        save_data(TASK_FILE,tasks)
+        save_data(CONFIG_FILE,config)
+        break
+
+    else:
+        print("unknown command")
+        print(random.choice(roasts))
